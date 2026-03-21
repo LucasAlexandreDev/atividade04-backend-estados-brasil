@@ -7,181 +7,204 @@
 // Import do arquivo com os dados de estados e cidades
 const dadosEstadoCidade = require('./estados_cidades')
 
-// Crio uma variável para acessar os dados
-const listaBrasil = dadosEstadoCidade
+// Crio uma variável para acessar os dados de todos os estados
+const listaBrasil = dadosEstadoCidade.listaDeEstados.estados
+
+
+// -------------- | FUNÇÕES AUXILIARES | -------------- 
+
+// Retorna true se dois valores forem iguais, ignorando espaços e maiúsculas/minúsculas
+const compararValoresIguais = function(item1, item2){
+    let resultado = String(item1).trim().toLowerCase() == String(item2).trim().toLowerCase()
+    
+    return resultado
+}
+
+// Função que retorna todas as informações do atributo estado, através da sigla (UF)
+const buscarEstadoPorSigla = function(siglaEstado){
+
+    let listaRespostaEstado = null
+
+    listaBrasil.forEach(function(itemEstado){
+
+        if(compararValoresIguais(itemEstado.sigla, siglaEstado)){    
+            listaRespostaEstado = itemEstado
+        }   
+    })
+
+    if(listaRespostaEstado == null){
+        return false
+    }
+
+    return listaRespostaEstado
+}
+
+
+// -------------- | FUNÇÕES DO PROJETO | -------------- 
 
 // Função que retorna todas as siglas dos estados (UF)
 const getListaDeEstados = function () {
     
-    let listaUfArray   = []     
+    let listaResposta = null
+    let listaUfArray  = []     
 
-    listaBrasil.listaDeEstados.estados.forEach(function(itemEstado){
+    listaBrasil.forEach(function(itemEstado){
         listaUfArray.push(itemEstado.sigla)
     })
 
-    let quantidade = listaUfArray.length
-
-    if (listaUfArray.length > 0 && quantidade > 0) {
-
-        listaResposta = {
-            uf        : listaUfArray,
-            quantidade: quantidade
-        }
-
-        return listaResposta
-
-    } else {
+    if(listaUfArray.length == 0) {
         return false
     }
+    
+    listaResposta = {
+        uf        : listaUfArray, 
+        quantidade: listaUfArray.length
+    }
+    
+    return listaResposta
 }
+
 
 // Função que retorna os dados de um estado
 const getDadosEstado = function (siglaEstado) {
 
-    let resposta = {
-        uf: null,
-        descricao: null,
-        capital: null,
-        regiao: null
-    }
+    let listaResposta = null
+    let listaEstado   = buscarEstadoPorSigla(siglaEstado)
 
-    listaBrasil.listaDeEstados.estados.forEach(function (itemEstado) {
-    
-        if (siglaEstado.toLowerCase() == itemEstado.sigla.toLowerCase()) {
-            
-            resposta.uf        = itemEstado.sigla
-            resposta.descricao = itemEstado.nome
-            resposta.capital   = itemEstado.capital
-            resposta.regiao    = itemEstado.regiao
-        }
-    })
-
-    if (resposta.uf      == null  || resposta.descricao == null ||
-        resposta.capital == null  || resposta.regiao    == null) {
-
+    if(!listaEstado){
         return false
-
-    }else{
-        return resposta
     }
+
+    listaResposta = {
+        uf        : listaEstado.sigla,
+        descricao : listaEstado.nome,
+        capital   : listaEstado.capital,
+        regiao    : listaEstado.regiao
+    }    
+    
+    return listaResposta
 }
+
 
 // Função que retorna apenas a capital e descrição de um estado
 const getCapitalEstado = function(siglaEstado){
 
-    let resposta = {
-        uf: null,
-        descricao: null,
-        capital: null
-    }
+    let listaResposta = null
+    let listaEstado   = buscarEstadoPorSigla(siglaEstado)
 
-    listaBrasil.listaDeEstados.estados.forEach(function(itemEstado){
-
-        if(siglaEstado.toLowerCase() == itemEstado.sigla.toLowerCase()){
-
-            resposta.uf        = itemEstado.sigla
-            resposta.descricao = itemEstado.nome
-            resposta.capital   = itemEstado.capital
-        }
-    })
-
-    if(resposta.uf == null || resposta.descricao == null ||resposta.capital == null){
+    if(!listaEstado){
         return false
-    
-    }else{
-        return resposta
     }
+
+    listaResposta = {
+        uf        : listaEstado.sigla,
+        descricao : listaEstado.nome,
+        capital   : listaEstado.capital
+    }
+    
+    return listaResposta
 }
+
 
 // Função que retorna todos os estados de uma região
 const getEstadosRegiao = function(regiao){
 
-    let resposta = {
-        regiao: null,
-        estados: null
-    }
+    let listaResposta  = null
+    let estadosArray   = []
 
-    let estadosArray = []
-
-    listaBrasil.listaDeEstados.estados.forEach(function(itemEstado){
+    listaBrasil.forEach(function(itemEstado){
         
-        if(regiao.toLowerCase() == itemEstado.regiao.toLowerCase()){
+        if(compararValoresIguais(itemEstado.regiao, regiao)){
             
-            resposta.regiao  = itemEstado.regiao
-            estadosArray.push({uf: itemEstado.sigla, descricao: itemEstado.nome})
+            estadosArray.push(
+                {
+                    uf       : itemEstado.sigla,
+                    descricao: itemEstado.nome 
+                }
+            )
+
+            listaResposta = {
+                regiao: itemEstado.regiao
+            }
         }
     })
 
-    resposta.estados = estadosArray
-
-    if(resposta.regiao == null || resposta.estados == null){
+    if(listaResposta == null || estadosArray.length == 0){
         return false
-    
-    }else{
-        return resposta
     }
+
+    listaResposta.estados = estadosArray
+
+    return listaResposta
 }
+
 
 // Função que retorna as cidades que já foram ou são capitais do Brasil
 const getCapitalPais = function(){
 
-    let resposta = {
-        capitais: null
-    }
-
+    let listaResposta = null
     let capitaisArray = []
 
-    listaBrasil.listaDeEstados.estados.forEach(function(itemEstado){
+    listaBrasil.forEach(function(itemEstado){
         
         if(itemEstado.capital_pais){
 
-            capitaisArray.push({capital_atual:             itemEstado.capital_pais.capital, uf:     itemEstado.sigla,  descricao:               itemEstado.nome, 
-                                capital:                   itemEstado.capital,              regiao: itemEstado.regiao, capital_pais_ano_inicio: itemEstado.capital_pais.ano_inicio,
-                                capital_pais_ano_terminio: itemEstado.capital_pais.ano_fim
-           
-            })
+            capitaisArray.push(
+                {
+                    capital_atual            : itemEstado.capital_pais.capital, 
+                    uf                       : itemEstado.sigla,  
+                    descricao                : itemEstado.nome, 
+                    capital                  : itemEstado.capital,              
+                    regiao                   : itemEstado.regiao, 
+                    capital_pais_ano_inicio  : itemEstado.capital_pais.ano_inicio,
+                    capital_pais_ano_terminio: itemEstado.capital_pais.ano_fim
+                }
+            )
         }
     })
 
-    resposta.capitais = capitaisArray
-
-    if(resposta.capitais == null){
+    if(capitaisArray.length == 0){
         return false
-
-    }else{
-        return resposta
     }
+
+    listaResposta = {
+        capitais : capitaisArray
+    }
+
+    return listaResposta
 }
+console.log(getCapitalPais())
 
 // Função que retorna todas as cidades de um estado
 const getCidades = function(siglaEstado){
 
-    let resposta = {}
-    let cidadesArray = []
+    let listaResposta = null
+    let cidadesArray  = []
+    let listaEstado   = buscarEstadoPorSigla(siglaEstado)
 
-    listaBrasil.listaDeEstados.estados.forEach(function(itemEstado){
-
-        if(siglaEstado.toLowerCase() == itemEstado.sigla.toLocaleLowerCase()){
-
-            resposta= {
-                uf                 : itemEstado.sigla,
-                descricao          : itemEstado.nome,
-                quantidade_cidades : itemEstado.cidades.length
-            }
-            
-            itemEstado.cidades.forEach(function(itemCidade){
-                cidadesArray.push(itemCidade.nome)
-            })             
-        }
-    })
-
-    resposta.cidades = cidadesArray
-    
-    
-    if(resposta.uf == null || resposta.descricao == null || resposta.quantidade_cidades == null || resposta.cidades == null){
+    if(!listaEstado || listaEstado.cidades.length == 0){
         return false
+    }    
     
-    }else{
-        return resposta
+    listaResposta = {
+        uf                 : listaEstado.sigla,
+        descricao          : listaEstado.nome,
+        quantidade_cidades : listaEstado.cidades.length
     }
-}   
+
+    listaEstado.cidades.forEach(function(itemCidade){
+        cidadesArray.push(itemCidade.nome)
+    })             
+
+    listaResposta.cidades = cidadesArray
+
+    return listaResposta    
+}  
+
+
+/*
+  Na validação fazemos da seguinte forma:
+
+  Objeto (JSON)  -> validar com null
+  Array  (lista) -> validar com .length
+*/
