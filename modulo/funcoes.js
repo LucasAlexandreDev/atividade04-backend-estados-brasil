@@ -20,6 +20,7 @@ const compararValoresIguais = function(item1, item2){
     return resultado
 }
 
+
 // Função que retorna todas as informações do atributo estado, através da sigla (UF)
 const buscarEstadoPorSigla = function(siglaEstado){
 
@@ -173,7 +174,7 @@ const getCapitalPais = function(){
 
     return listaResposta
 }
-console.log(getCapitalPais())
+
 
 // Função que retorna todas as cidades de um estado
 const getCidades = function(siglaEstado){
