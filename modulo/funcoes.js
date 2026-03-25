@@ -1,5 +1,5 @@
 /* *********************************************************************
-* Objetivo: Gerar novos retornos de dados, com base na manipulação dos dados da API estado_cidades.js
+* Objetivo: Gerar novos retornos de dados, com base na manipulação dos dados do 'banco de dados' estado_cidades.js
 * Data: 18/03/2026  
 * Autor: Lucas Alexandre Da Silva
 * **********************************************************************/
@@ -15,9 +15,14 @@ const listaBrasil = dadosEstadoCidade.listaDeEstados.estados
 
 // Retorna true se dois valores forem iguais, ignorando espaços e maiúsculas/minúsculas
 const compararValoresIguais = function(item1, item2){
-    let resultado = String(item1).trim().toLowerCase() == String(item2).trim().toLowerCase()
+
+    let resultado = String(item1).trim().toLowerCase() === String(item2).trim().toLowerCase()
     
-    return resultado
+    if(resultado){
+        return resultado
+    }
+
+    return false
 }
 
 
@@ -28,7 +33,7 @@ const buscarEstadoPorSigla = function(siglaEstado){
 
     listaBrasil.forEach(function(itemEstado){
 
-        if(compararValoresIguais(itemEstado.sigla, siglaEstado)){    
+        if(compararValoresIguais(itemEstado.sigla, siglaEstado)){     
             listaRespostaEstado = itemEstado
         }   
     })
@@ -181,7 +186,7 @@ const getCidades = function(siglaEstado){
 
     let listaResposta = null
     let cidadesArray  = []
-    let listaEstado   = buscarEstadoPorSigla(siglaEstado)
+    let listaEstado   = buscarEstadoPorSigla(siglaEstado) 
 
     if(!listaEstado || listaEstado.cidades.length == 0){
         return false
@@ -201,7 +206,6 @@ const getCidades = function(siglaEstado){
 
     return listaResposta    
 }  
-
 
 /*
   Na validação fazemos da seguinte forma:
